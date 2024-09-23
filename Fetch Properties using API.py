@@ -1,36 +1,36 @@
-import requests
+import requests, os
 import pandas as pd
+from dotenv import load_dotenv
 
-# Set up the headers and API key
+load_dotenv()
+
+api_key = os.getenv('API_KEY')
+
 headers = {
-    'Authorization': 'Bearer Your_API_KEY',
+    'Authorization': f'Bearer {api_key}',
     'Content-Type': 'application/json'
 }
 
-# Function to fetch properties
 def get_properties(object_type):
     url = f"https://api.hubapi.com/crm/v3/properties/{object_type}"
     response = requests.get(url, headers=headers)
     properties = response.json().get('results', [])
     return {prop['name']: prop for prop in properties}
 
-# Fetch contact and company properties
 contact_properties = get_properties('contact')
 company_properties = get_properties('company')
 deal_properties = get_properties('deal')
 
-# Find common properties
 common_properties_contact_company = set(contact_properties.keys()).intersection(company_properties.keys())
 common_properties_contact_deal = set(contact_properties.keys()).intersection(deal_properties.keys())
-
-print("Common properties between contact and company are :- ", len(common_properties_contact_company))
-print(common_properties_contact_company)
-
-print("Common properties between contact and deal are :- ", len(common_properties_contact_deal))
-print(common_properties_contact_deal)
 
 df = pd.DataFrame(common_properties_contact_company, columns=["Common properties Contact-Company"])
 df.to_excel("contact-company.xlsx", index=False)
 
 df = pd.DataFrame(common_properties_contact_deal, columns=["Common properties Contact-Deal"])
 df.to_excel("contact-deal.xlsx", index=False)
+
+
+quote_properties = get_properties('quote')
+df = pd.DataFrame.from_dict(quote_properties, orient='index')
+df.to_excel("quote.xlsx", index=False)
