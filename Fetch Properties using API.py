@@ -34,3 +34,7 @@ df.to_excel("contact-deal.xlsx", index=False)
 quote_properties = get_properties('quote')
 df = pd.DataFrame.from_dict(quote_properties, orient='index')
 df.to_excel("quote.xlsx", index=False)
+
+meeting_properties = get_properties('meeting')
+df = pd.DataFrame.from_dict(meeting_properties, orient='index')
+df.to_excel("meeting.xlsx", index=False)
