@@ -38,3 +38,17 @@ df.to_excel("quote.xlsx", index=False)
 meeting_properties = get_properties('meeting')
 df = pd.DataFrame.from_dict(meeting_properties, orient='index')
 df.to_excel("meeting.xlsx", index=False)
+
+
+def company_properties(object_type):
+    url = f"https://api.hubapi.com/crm/v3/properties/{object_type}"
+    params = {
+        'include': 'extra_metadata'
+    }
+    response = requests.get(url, headers=headers, params=params)
+    properties = response.json().get('results', [])
+    return {prop['name']: prop for prop in properties}
+
+companies_properties = company_properties('company')
+df = pd.DataFrame.from_dict(meeting_properties, orient='index')
+df.to_excel("company.xlsx", index=False)
